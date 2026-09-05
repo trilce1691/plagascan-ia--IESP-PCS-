@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#176b45">
+<link rel="manifest" href="manifest.webmanifest">
+<title>PlagaScan IA – Ayacucho</title>
+<style>
+:root{--g:#176b45;--g2:#23935e;--bg:#f4f7f5;--card:#fff;--txt:#173027;--mut:#66756e;--danger:#a33}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--txt)}
+header{background:linear-gradient(135deg,var(--g),var(--g2));color:white;padding:22px 18px 18px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:23px}header p{margin:5px 0 0;opacity:.9;font-size:13px}
+main{max-width:760px;margin:auto;padding:16px 14px 90px}.card{background:var(--card);border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 3px 15px #0000000d}
+label{font-weight:700;font-size:13px;display:block;margin:10px 0 6px}select,input,button{width:100%;padding:12px;border:1px solid #d6dfda;border-radius:12px;font:inherit}
+button{background:var(--g);color:#fff;border:0;font-weight:700;cursor:pointer}button.secondary{background:#e8f2ed;color:var(--g)}button.danger{background:#8e3030}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.camera{width:100%;aspect-ratio:4/3;background:#17221e;border-radius:15px;object-fit:cover}.hidden{display:none}
+#preview{width:100%;max-height:380px;object-fit:contain;background:#eef3f0;border-radius:15px;margin-top:10px}
+.badge{display:inline-block;background:#e9f5ee;color:var(--g);padding:5px 9px;border-radius:99px;font-size:12px;font-weight:700}
+.result h2{margin:8px 0 3px}.muted{color:var(--mut);font-size:13px}.warn{background:#fff6df;padding:10px;border-radius:12px;font-size:13px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dfe8e3;display:grid;grid-template-columns:repeat(4,1fr);z-index:10}
+nav button{background:white;color:#456057;border-radius:0;padding:10px 4px;font-size:11px}nav button.active{color:var(--g);font-weight:800}
+ul{padding-left:20px}li{margin:5px 0}
+small{color:var(--mut)}
+</style>
+</head>
+<body>
+<header><h1>🌿 PlagaScan IA – Ayacucho</h1><p>Identificación orientativa de plagas y enfermedades mediante cámara</p></header>
+<main>
+<section id="scan" class="page">
+<div class="card">
+<label>Cultivo</label>
+<select id="crop">
+<option>Papa</option><option>Quinua</option><option>Maíz</option><option>Haba</option><option>Arveja</option>
+<option>Lechuga</option><option>Brócoli</option><option>Zanahoria</option><option>Cebolla</option><option>Espinaca</option><option>Acelga</option>
+<option>Ají/Pimiento</option><option>Tomate</option><option>Pepino/Zapallo italiano</option><option>Repollo</option><option>Rabanito</option>
+<option>Palto</option><option>Cítricos</option><option>Tuna</option>
+</select>
+<label>Fotografía de la planta</label>
+<video id="camera" class="camera" autoplay playsinline></video>
+<img id="preview" class="hidden" alt="Vista previa">
+<div class="row" style="margin-top:10px"><button id="start">📷 Activar cámara</button><button id="capture" class="secondary">Capturar</button></div>
+<input id="file" type="file" accept="image/*" capture="environment" style="margin-top:10px">
+<button id="analyze" style="margin-top:10px">🔎 Analizar planta</button>
+<p class="muted">Consejo: fotografía una hoja o parte afectada con buena luz y sin movimiento.</p>
+</div>
+<div id="result" class="card result hidden"></div>
+</section>
+
+<section id="guide" class="page hidden">
+<div class="card"><h2>📚 Guía rápida</h2><p>La aplicación orienta el diagnóstico. Una foto no sustituye la evaluación de campo ni el diagnóstico de un especialista.</p>
+<ul>
+<li><b>Gorgojo de los Andes:</b> daño característico en tubérculos; aplicar manejo integrado.</li>
+<li><b>Pulgones:</b> colonias en brotes y envés; vigilar y favorecer enemigos naturales.</li>
+<li><b>Mosca blanca:</b> adultos pequeños y melaza; usar trampas y manejo integrado.</li>
+<li><b>Minadores:</b> galerías serpenteantes dentro de las hojas.</li>
+<li><b>Polillas:</b> revisar hojas, tallos, tubérculos o frutos según cultivo.</li>
+</ul></div>
+</section>
+
+<section id="history" class="page hidden"><div class="card"><h2>🕘 Historial</h2><div id="hist"></div><button id="clearHist" class="danger">Borrar historial</button></div></section>
+
+<section id="settings" class="page hidden">
+<div class="card"><h2>⚙️ IA</h2>
+<p class="muted">Para conectar una IA real, introduce el endpoint de tu servidor. La app enviará la imagen como <code>multipart/form-data</code> con los campos <code>image</code> y <code>crop</code>.</p>
+<label>Endpoint de IA</label><input id="api" placeholder="https://tu-servidor.com/predict">
+<button id="saveApi" style="margin-top:10px">Guardar configuración</button>
+<div class="warn" style="margin-top:12px"><b>Modo actual:</b> si no hay endpoint o no responde, se usa el modo demostración local. No debe presentarse como diagnóstico definitivo.</div>
+</div>
+<div class="card"><h3>Seguridad de productos</h3><p class="muted">Las recomendaciones químicas deben verificarse en la consulta vigente de SENASA y en la etiqueta del producto registrado para el cultivo y organismo objetivo. Usar EPP, respetar dosis, periodo de carencia y reingreso.</p></div>
+</section>
+</main>
+<nav>
+<button class="active" data-page="scan">📷<br>Escanear</button>
+<button data-page="guide">📚<br>Guía</button>
+<button data-page="history">🕘<br>Historial</button>
+<button data-page="settings">⚙️<br>IA</button>
+</nav>
+<script src="js/app.js"></script>
+</body></html>

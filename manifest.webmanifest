@@ -1,0 +1,10 @@
+{
+  "name":"PlagaScan IA – Ayacucho",
+  "short_name":"PlagaScan IA",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#f4f7f5",
+  "theme_color":"#176b45",
+  "description":"Aplicación PWA para orientación en identificación de plagas y enfermedades de cultivos.",
+  "icons":[]
+}
